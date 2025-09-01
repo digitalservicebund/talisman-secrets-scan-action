@@ -17,17 +17,11 @@ inputs:
     description: "The latest commit on the remote being pushed to"
     required: false
     default: ${{ github.event.before }}
-  talisman-version:
-    description: "The version of Talisman to use"
-    required: false
-    default: "v1.30.0"
 runs:
   using: "docker"
   image: "Dockerfile"
   args:
     - ${{ inputs.local-ref }} ${{ inputs.local-sha }} ${{ inputs.remote-ref }} ${{ inputs.remote-sha }}
-  env:
-    TALISMAN_VERSION: ${{ inputs.talisman-version }}
 branding:
   icon: "lock"
   color: "yellow"
