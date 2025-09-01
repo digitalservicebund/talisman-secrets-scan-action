@@ -7,15 +7,15 @@ This action uses [Talisman](https://thoughtworks.github.io/talisman/) to scan th
 ```yml
 steps:
   - name: Detect secrets with Talisman in incoming commits
-    uses: carhartl/talisman-secrets-scan-action@v1.3.0
+    uses: digitalservicebund/talisman-secrets-scan-action@main
 ```
 
 ## Caveat
 
-When using this along with the `actions/checkout@v2` step you'll need to configure it to avoid a too shallow clone:
+When using this along with the `actions/checkout@v5` step you'll need to configure it to avoid a too shallow clone:
 
 ```yml
-- uses: actions/checkout@v2
+- uses: actions/checkout@v5
   with:
     fetch-depth: 0
 ```
