@@ -10,7 +10,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-#        with:
-#          fetch-depth: 0 # Ensure Talisman can operate on a valid revision range
+        with:
+          fetch-depth: 0 # Ensure Talisman can operate on a valid revision range
+      - name: "test git"
+        run: git log
       - name: Test action
         uses: ./
