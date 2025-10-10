@@ -10,6 +10,27 @@ steps:
     uses: digitalservicebund/talisman-secrets-scan-action@main
 ```
 
+### Example Workflow
+
+```yaml
+name: Secret Scan
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  secret-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # Ensure Talisman can operate on a valid revision range
+      - name: Detect secrets with Talisman in incoming commits
+        uses: digitalservicebund/talisman-secrets-scan-action@main
+```
+
 ## Caveat
 
 When using this along with the `actions/checkout@v5` step you'll need to configure it to avoid a too shallow clone:
