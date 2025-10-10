@@ -18,10 +18,24 @@ inputs:
     required: false
     default: ${{ github.event.before }}
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  args:
-    - ${{ inputs.local-ref }} ${{ inputs.local-sha }} ${{ inputs.remote-ref }} ${{ inputs.remote-sha }}
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git
+      shell: bash
+    - name: Download Talisman
+      run: |
+        curl -L -o talisman https://github.com/thoughtworks/talisman/releases/download/v1.37.0/talisman_linux_amd64
+        chmod +x talisman
+      shell: bash
+    - name: Configure git safe directory
+      run: git config --global --add safe.directory $PWD
+      shell: bash
+    - name: Run Talisman
+      run: echo "${{ inputs.local-ref }} ${{ inputs.local-sha }} ${{ inputs.remote-ref }} ${{ inputs.remote-sha }}" | ./talisman --githook pre-push
+      shell: bash
 branding:
   icon: "lock"
   color: "yellow"

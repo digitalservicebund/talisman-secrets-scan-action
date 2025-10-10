@@ -1,0 +1,6 @@
+pre-commit:
+  parallel: true
+  commands:
+    secret-scan:
+      tags: security
+      run: talisman --githook pre-commit
