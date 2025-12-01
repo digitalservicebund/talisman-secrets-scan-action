@@ -1,13 +1,15 @@
 # Detect secrets with Talisman action
 
-This action uses [Talisman](https://thoughtworks.github.io/talisman/) to scan the incoming (pushed) range of commits for accidentally added secrets and sensitive information. It mimics a pre-push hook for this, thus it works nicely with a local git hook in tandem, that is as a fallback, last line of defense.
+This action uses [Talisman](https://thoughtworks.github.io/talisman/) to scan the incoming (pushed) range of commits for
+accidentally added secrets and sensitive information. It mimics a pre-push hook for this, thus it works nicely with a
+local git hook in tandem, that is as a fallback, last line of defense.
 
 ## Example usage
 
 ```yml
 steps:
   - name: Detect secrets with Talisman in incoming commits
-    uses: digitalservicebund/talisman-secrets-scan-action@main
+    uses: digitalservicebund/talisman-secrets-scan-action@51e8f53696246ae85288ce56e483a44d96fea241
 ```
 
 ### Example Workflow
@@ -26,19 +28,20 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          fetch-depth: 0 # Ensure Talisman can operate on a valid revision range
+          fetch-depth: 0 # Fetch the full history
       - name: Detect secrets with Talisman in incoming commits
-        uses: digitalservicebund/talisman-secrets-scan-action@main
+        uses: digitalservicebund/talisman-secrets-scan-action@51e8f53696246ae85288ce56e483a44d96fea241
 ```
 
 ## Caveat
 
-When using this along with the `actions/checkout@v5` step you'll need to configure it to avoid a too shallow clone:
+The action `actions/checkout@v6` fetches only the current commit by default, not the whole history. That's why you need
+to configure it to avoid shallow clone and fetch the full history.
 
 ```yml
-- uses: actions/checkout@v5
+- uses: actions/checkout@v6
   with:
-    fetch-depth: 0
+    fetch-depth: 0 # Fetch the full history
 ```
 
 Otherwise, you may run into Talisman erroring out while it's trying to execute git with an invalid revision range:
