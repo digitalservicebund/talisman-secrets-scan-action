@@ -1,22 +1,6 @@
 name: "Detect secrets with Talisman"
 description: "Scan an incoming range of commits for accidentally added secrets and sensitive information"
-inputs:
-  local-ref:
-    description: "Ref that was updated"
-    required: false
-    default: ${{ github.ref }}
-  local-sha:
-    description: "The latest of the incoming commits"
-    required: false
-    default: ${{ github.event.after }}
-  remote-ref:
-    description: "Ref that was updated"
-    required: false
-    default: ${{ github.ref }}
-  remote-sha:
-    description: "The latest commit on the remote being pushed to"
-    required: false
-    default: ${{ github.event.before }}
+
 runs:
   using: "composite"
   steps:
@@ -33,9 +17,25 @@ runs:
     - name: Configure git safe directory
       run: git config --global --add safe.directory $PWD
       shell: bash
-    - name: Run Talisman
-      run: echo "${{ inputs.local-ref }} ${{ inputs.local-sha }} ${{ inputs.remote-ref }} ${{ inputs.remote-sha }}" | ./talisman --githook pre-push
+    - name: Run Talisman on push
+      if: ${{ github.event_name != 'pull_request' }}
+      run: |
+        LOCAL_REF="${{ github.ref }}"
+        LOCAL_SHA="${{ github.event.after }}"
+        REMOTE_REF="${{ github.ref }}"
+        REMOTE_SHA="${{ github.event.before }}"
+        echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA" | ./talisman --githook pre-push
       shell: bash
+    - name: Run Talisman in Pull Request
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        LOCAL_REF="refs/heads/${{ github.head_ref }}"
+        LOCAL_SHA="${{ github.event.pull_request.head.sha }}"
+        REMOTE_REF="refs/heads/${{ github.base_ref }}"
+        REMOTE_SHA="${{ github.event.pull_request.base.sha }}"
+        echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA" | ./talisman --githook pre-push
+      shell: bash
+
 branding:
   icon: "lock"
   color: "yellow"
