@@ -26,11 +26,13 @@ runs:
         echo "REMOTE_SHA=${{ github.event.before }}" >> "$GITHUB_ENV"
       shell: bash
     - name: "Commit Range - Pull-Request"
+      env:
+        GH_TOKEN: ${{ github.token }}
       if: ${{ github.event_name == 'pull_request' }}
       run: |
+        echo "GITHUB_BASE_REF=${GITHUB_BASE_REF}"
         BASE_SHA="$(gh api repos/${GITHUB_REPOSITORY}/git/ref/heads/${GITHUB_BASE_REF} --jq .object.sha)"
         echo "BASE_SHA=$BASE_SHA"
-        echo "GITHUB_BASE_REF=${GITHUB_BASE_REF}"
         echo "LOCAL_REF=refs/heads/${{ github.head_ref }}" >> "$GITHUB_ENV"
         echo "LOCAL_SHA=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
         echo "REMOTE_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_ENV"
