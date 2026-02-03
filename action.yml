@@ -18,7 +18,7 @@ runs:
       run: git config --global --add safe.directory $PWD
       shell: bash
     - name: Run Talisman on push
-      if: ${{ github.event_name != 'pull_request' }}
+      if: ${{ github.event_name == 'push' }}
       run: |
         LOCAL_REF="${{ github.ref }}"
         LOCAL_SHA="${{ github.event.after }}"
