@@ -20,24 +20,24 @@ runs:
     - name: "Commit Range - Push"
       if: ${{ github.event_name == 'push' }}
       run: |
-        LOCAL_REF="${{ github.ref }}"
-        LOCAL_SHA="${{ github.event.after }}"
-        REMOTE_REF="${{ github.ref }}"
-        REMOTE_SHA="${{ github.event.before }}"
+        LOCAL_REF="${{ github.ref }}" >> "$GITHUB_ENV"
+        LOCAL_SHA="${{ github.event.after }}" >> "$GITHUB_ENV"
+        REMOTE_REF="${{ github.ref }}" >> "$GITHUB_ENV"
+        REMOTE_SHA="${{ github.event.before }}" >> "$GITHUB_ENV"
         echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA"
       shell: bash
     - name: "Commit Range - Pull-Request"
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        LOCAL_REF="refs/heads/${{ github.head_ref }}"
-        LOCAL_SHA="${{ github.event.pull_request.head.sha }}"
-        REMOTE_REF="refs/heads/${{ github.base_ref }}"
-        REMOTE_SHA="${{ github.event.pull_request.base.sha }}"
+        LOCAL_REF="refs/heads/${{ github.head_ref }}" >> "$GITHUB_ENV"
+        LOCAL_SHA="${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
+        REMOTE_REF="refs/heads/${{ github.base_ref }}" >> "$GITHUB_ENV"
+        REMOTE_SHA="${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
         echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA"
       shell: bash
-    - name: Run Talisman on push
+    - name: "Run Talisman"
       run: |
-        echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA" | ./talisman --githook pre-push
+        echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA"
       shell: bash
 
 branding:
