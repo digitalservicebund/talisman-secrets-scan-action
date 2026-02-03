@@ -34,6 +34,7 @@ runs:
         echo "REMOTE_SHA=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
       shell: bash
     - name: "Run Talisman"
+      if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
       run: |
         echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA"  | ./talisman --githook pre-push
       shell: bash

@@ -4,3 +4,4 @@ pre-commit:
     secret-scan:
       tags: security
       run: talisman --githook pre-commit
+
