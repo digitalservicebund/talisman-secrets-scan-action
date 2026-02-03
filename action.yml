@@ -4,20 +4,17 @@ description: "Scan an incoming range of commits for accidentally added secrets a
 runs:
   using: "composite"
   steps:
-    - name: Event Name
-      run: echo "Event Name ${{ github.event_name }}"
-      shell: bash
-    - name: Install dependencies
+    - name: "Install dependencies"
       run: |
         sudo apt-get update
         sudo apt-get install -y git
       shell: bash
-    - name: Download Talisman
+    - name: "Download Talisman"
       run: |
         curl -L -o talisman https://github.com/thoughtworks/talisman/releases/download/v1.37.0/talisman_linux_amd64
         chmod +x talisman
       shell: bash
-    - name: Configure git safe directory
+    - name: "Configure git safe directory"
       run: git config --global --add safe.directory $PWD
       shell: bash
     - name: "Commit Range - Push"
@@ -33,15 +30,12 @@ runs:
         GH_TOKEN: ${{ github.token }}
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        echo "GITHUB_BASE_REF=${GITHUB_BASE_REF}"
-        BASE_SHA="$(gh api repos/${GITHUB_REPOSITORY}/git/ref/heads/${GITHUB_BASE_REF} --jq .object.sha)"
-        echo "BASE_SHA=$BASE_SHA"
         echo "LOCAL_REF=refs/heads/${{ github.head_ref }}" >> "$GITHUB_ENV"
         echo "LOCAL_SHA=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
         echo "REMOTE_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_ENV"
         echo "REMOTE_SHA=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
       shell: bash
-    - name: "Run Talisman"
+    - name: "Run Talisman on ${{ github.event_name }}"
       if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
       run: |
         echo "$LOCAL_REF $LOCAL_SHA $REMOTE_REF $REMOTE_SHA"  | ./talisman --githook pre-push
